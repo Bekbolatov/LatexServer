@@ -24,6 +24,7 @@ class LatexService @Inject()(ws: WSClient, serviceDiscovery: ServiceDiscovery) {
       url(serviceInstance.httpUrl("/cgi-bin/latex2pdf.sh")).
       withHeaders("Content-Type" -> "application/x-tex").
       withHeaders("Accept" -> "application/json").
+      withFollowRedirects(true).
       withRequestTimeout(timeoutMillis.millis).
       post(tex).
       map { response =>
@@ -45,7 +46,11 @@ class LatexService @Inject()(ws: WSClient, serviceDiscovery: ServiceDiscovery) {
 
       val futureResponse: Future[(Boolean, WSResponse)] = for {
         (success, uri) <- convertLatex(tex, serviceInstance, timeoutMillis = timeoutMillis, log = log)
-        fileResponse <- ws.url(uri).get()
+        fileResponse <- ws.
+          url(uri).
+          withFollowRedirects(true).
+          withRequestTimeout(timeoutMillis.millis).
+          get()
       } yield (success, fileResponse)
 
       val futureResult: Future[Option[(Boolean, Result)]] = futureResponse.map { case (success, response) =>
@@ -64,12 +69,12 @@ class LatexService @Inject()(ws: WSClient, serviceDiscovery: ServiceDiscovery) {
       }
 
       futureResult.onSuccess { case res =>
-          promise.success(res)
+        promise.success(res)
       }
 
       futureResult.onFailure { case t =>
-        log.foreach(_("LatexService: Error getting from server"))
-        log.foreach(_(t.getStackTrace.toString))
+        log.foreach(_ ("LatexService: Error getting from server"))
+        log.foreach(_ (t.getStackTrace.toString))
         promise.success(None)
       }
 
