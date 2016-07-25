@@ -1,0 +1,18 @@
+#!/bin/bash
+
+DISTRIB_HOME=/Users/rbekbolatov/repos/gh/bekbolatov/IX/common
+
+DOCKER_IMAGE=latex_server:latest
+
+TASK_FAMILY=LatexServer
+TASK_COUNT=2
+SERVICE_TASKCOUNT_MAX=200
+SERVICE_TASKCOUNT_MIN=50
+SERVICENAME=$TASK_FAMILY
+
+SET_MEMORY=200
+SET_CPU=200
+PORT=9002
+PORT_MAPPING='[ { "hostPort": '$PORT', "containerPort": 80, "protocol": "tcp" } ]'
+
+AWSLOGS_GROUP=latex_server
