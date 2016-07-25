@@ -1,5 +1,6 @@
 package com.sparkydots.service.latex
 
+import java.io.{StringWriter, PrintWriter}
 import javax.inject.{Inject, Singleton}
 
 import com.sparkydots.service.{ServiceInstance, ServiceDiscovery}
@@ -74,7 +75,9 @@ class LatexService @Inject()(ws: WSClient, serviceDiscovery: ServiceDiscovery) {
 
       futureResult.onFailure { case t =>
         log.foreach(_ ("LatexService: Error getting from server"))
-        log.foreach(_ (t.getStackTrace.toString))
+        val sw = new StringWriter
+        t.printStackTrace(new PrintWriter(sw))
+        log.foreach(_ (sw.toString))
         promise.success(None)
       }
 
