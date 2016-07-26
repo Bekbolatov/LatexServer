@@ -11,7 +11,7 @@ SERVICE_TASKCOUNT_MIN=50
 SERVICENAME=$TASK_FAMILY
 
 SET_MEMORY=200
-SET_CPU=200
+SET_CPU=100
 PORT=9002
 PORT_MAPPING='[ { "hostPort": '$PORT', "containerPort": 80, "protocol": "tcp" } ]'
 
